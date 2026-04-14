@@ -1,0 +1,29 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# --- Virtual Environment ---
+# Kendi kurduğun venv ismini buraya ekle (genelde venv olur)
+venv/
+env/
+.venv/
+
+# --- Machine Learning and Data ---
+# Eğitilmiş model dosyaları (Genelde büyük oldukları için repoda tutulmaz,
+# ama çok küçüklerse çıkarabilirsin)
+*.pth
+*.h5
+*.onnx
+*.pkl
+
+data/
+logs/
+tensorboard/
+
+# --- IDE and System Files ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
