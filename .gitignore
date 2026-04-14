@@ -11,8 +11,6 @@ env/
 .venv/
 
 # --- Machine Learning and Data ---
-# Eğitilmiş model dosyaları (Genelde büyük oldukları için repoda tutulmaz,
-# ama çok küçüklerse çıkarabilirsin)
 *.pth
 *.h5
 *.onnx
