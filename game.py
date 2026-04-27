@@ -1,3 +1,5 @@
+import random
+
 import pygame, sys
 from pygame.locals import *
  
@@ -35,10 +37,8 @@ class Player(pygame.sprite.Sprite):
             self.acc.x = -ACC
         if pressed_keys[K_RIGHT]:
             self.acc.x = ACC
-        if pressed_keys[K_UP]:
-            self.acc.y = -ACC
-        if pressed_keys[K_DOWN]:
-            self.acc.y = ACC
+        if pressed_keys[K_SPACE]:
+            self.jump()
 
         self.acc.x += self.vel.x * FRIC
         self.acc.y += self.vel.y * FRIC
@@ -51,21 +51,41 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = WIDTH
             
         self.rect.midbottom = self.pos
+    
+    def jump(self):
+        hits = pygame.sprite.spritecollide(P1 , platforms, False)
+        # check if player is on a platform, if so, jump (double jump prevention)
+        if hits: 
+            self.vel.y = -35
 
     def update(self):
-        hits = pygame.sprite.spritecollide(P1 , platforms, False)
-        if hits:
-            self.pos.y = hits[0].rect.top + 1
-            self.vel.y = 0
+        hits = pygame.sprite.spritecollide(P1 ,platforms, False)
+        if P1.vel.y > 0:        
+            if hits:
+                self.vel.y = 0
+                self.pos.y = hits[0].rect.top + 1
  
 class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surf = pygame.Surface((WIDTH, 20))
-        self.surf.fill((255,0,0))
-        self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT - 10))
+        self.surf = pygame.Surface((random.randint(50, 100), 12))
+        self.surf.fill((0,255,0))
+        self.rect = self.surf.get_rect(center = (random.randint(0,WIDTH-10),
+                                                 random.randint(0, HEIGHT-30)))
+def plat_gen():
+    while len(platforms) < 7 :
+        width = random.randrange(50,100)
+        p  = platform()             
+        p.rect.center = (random.randrange(0, WIDTH - width),
+                            random.randrange(-50, 0))
+        platforms.add(p)
+        all_sprites.add(p)
  
 PT1 = platform()
+PT1.surf = pygame.Surface((WIDTH, 20))
+PT1.surf.fill((255,0,0))
+PT1.rect = PT1.surf.get_rect(center = (WIDTH/2, HEIGHT - 10))
+
 P1 = Player()
 
 all_sprites = pygame.sprite.Group()
@@ -74,6 +94,11 @@ all_sprites.add(P1)
 
 platforms = pygame.sprite.Group()
 platforms.add(PT1)
+
+for x in range(random.randint(5, 6)):
+    pl = platform()
+    platforms.add(pl)
+    all_sprites.add(pl)
  
 while True:
     for event in pygame.event.get():
@@ -91,5 +116,13 @@ while True:
 
     P1.move()
     P1.update()
+    plat_gen()
+
+    if P1.rect.top <= HEIGHT / 3:
+        P1.pos.y += abs(P1.vel.y)
+        for plat in platforms:
+            plat.rect.y += abs(P1.vel.y)
+            if plat.rect.top >= HEIGHT:
+                plat.kill()
 
     
